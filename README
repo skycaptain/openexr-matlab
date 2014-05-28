@@ -1,18 +1,12 @@
 # OpenEXR for Matlab
 
-
-
 ### Note
 This is a modified mirror repository for the OpenEXR-Bindings from *HDRITools - High Dynamic Range Image Tools*. The original code is either incompatible or hard to compile with the latest versions of OpenEXR and mex, so we modified and cleaned-up their code to be hassle-free compatible with the latest versions of MATLAB, Xcode and the OpenEXR-Library.
 
 The original code can be obtained at [https://bitbucket.org/edgarv/hdritools/](https://bitbucket.org/edgarv/hdritools/). The original copyright remains to Jinwei Gu and Edgar Velazquez-Armendariz.
 
-
-
 ### What is it?
 OpenEXR is a popular high dynamic range image fileformat mainly used by the film industry. This repository provides an interface for reading and writing OpenEXR files within MATLAB.
-
-
 
 ### Install
 Install the lastest version of the OpenEXR-Library, e.g. via [Homebrew](http://brew.sh/):
@@ -24,8 +18,6 @@ Now just run `make.m` inside of MATLAB to comile the bindings. If you install th
 You may need to update your `mexopts.sh`. An updated version of `mexopts.sh` is included within the files, just diff them, or just copy the file to `~/.matlab`.
 
 Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and `exrinfo` just like any other MATLAB-Function.
-
-
 
 ### Usage
 ##### exrread
@@ -54,12 +46,8 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 	
 	>> exrwrite(a, 'a.exr');
 
-
-
 ### Ceveats
 The code was only tested with OSx 10.9.3 Mavericks, MATLAB 2014a 8.3.0, Xcode Version 5.1.1 and OpenEXR 2.1.0.
-
-
 
 ### Authors
 Inital code  
