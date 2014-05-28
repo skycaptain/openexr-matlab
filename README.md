@@ -48,8 +48,3 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 
 ### Ceveats
 The code was only tested with OSx 10.9.3 Mavericks, MATLAB 2014a 8.3.0, Xcode Version 5.1.1 and OpenEXR 2.1.0.
-
-### Authors
-Jinwei Gu <jwgu AT cs DOT cornell DOT edu>  
-Edgar Velazquez-Armendariz <eva5 AT cs DOT cornell DOT edu>  
-Manuel Leonhardt <leom AT hs-furtwangen DOT de>  
