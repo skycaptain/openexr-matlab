@@ -9,13 +9,13 @@ The original code can be obtained at [https://bitbucket.org/edgarv/hdritools/](h
 OpenEXR is a popular high dynamic range image fileformat mainly used by the film industry. This repository provides an interface for reading and writing OpenEXR files within MATLAB.
 
 ### Install
-Install the lastest version of the OpenEXR-Library, e.g. via [Homebrew](http://brew.sh/):
+Install the latest version of the OpenEXR-Library, e.g. via [Homebrew](http://brew.sh/):
 
 	$ brew install openexr
 
-Now just run `make.m` inside of MATLAB to comile the bindings. If you install the OpenEXR-Library without Homebrew you may also change the pathname inside of `make.m` to the path you installed the OpenEXR-Library.
+Now just run `make.m` inside of MATLAB to comile the bindings. If you install the OpenEXR-Library without Homebrew you may also change the pathname inside of `make.m` to the path you've installed the OpenEXR-Library.
 
-You may need to update your `mexopts.sh`. An updated version of `mexopts.sh` is included within the files, just diff them, or just copy the file to `~/.matlab`.
+You may also need to update your `mexopts.sh`. An updated version of `mexopts.sh` is included within the files, just diff them, or just copy the file to `~/.matlab`.
 
 Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and `exrinfo` just like any other MATLAB-Function.
 
@@ -50,17 +50,6 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 The code was only tested with OSx 10.9.3 Mavericks, MATLAB 2014a 8.3.0, Xcode Version 5.1.1 and OpenEXR 2.1.0.
 
 ### Authors
-Inital code  
-Jinwei Gu  
-jwgu [at] cs_cornell_edu  
-http://www.cs.columbia.edu/~jwgu/
-
-Modified to use a custom compiled static version of OpenEXR 1.6.1  
-and to provide Matlab side error handling and documentation by  
-Edgar Velazquez-Armendariz  
-eva5 [at] cs_cornell_edu  
-April 2008
-
-Modified to use the latest versions of MATLAB and OpenEXR on OSx by  
-Manuel Leonhardt  
-May 2014
+Jinwei Gu <jwgu AT cs DOT cornell DOT edu>
+Edgar Velazquez-Armendariz <eva5 AT cs DOT cornell DOT edu>
+Manuel Leonhardt <leom AT hs-furtwangen DOT de>
