@@ -1,2 +1,0 @@
-OpenEXR-for-Matlab
-==================
