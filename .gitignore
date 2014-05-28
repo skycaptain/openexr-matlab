@@ -1,0 +1,7 @@
+/en.lproj/
+
+*.mexmaci64
+
+/OpenEXR for Matlab-Info.plist
+/OpenEXR_for_MatlabProj.xcconfig
+/OpenEXR_for_MatlabTarget.xcconfig
