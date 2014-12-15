@@ -29,22 +29,22 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 
 	>> max(image(:))
 	ans =
-	
+
 	    2.9297
-	
+
 	>> min(a(:))
 	ans =
-	
+
 	    0.3069
 
 ##### exrwrite
 	>> a = 100 * rand(300,300,3);
 	>> size(a)
 	ans =
-	
+
 	   300   300     3
-	
+
 	>> exrwrite(a, 'a.exr');
 
 ### Ceveats
-The code was only tested with OSx 10.9.3 Mavericks, MATLAB 2014a 8.3.0, Xcode Version 5.1.1 and OpenEXR 2.1.0.
+The code was only tested with OSx 10.9+, MATLAB 2014a 8.3.0, Xcode Version 5+ and OpenEXR 2.1.0.
