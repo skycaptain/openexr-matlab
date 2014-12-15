@@ -47,4 +47,4 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 	>> exrwrite(a, 'a.exr');
 
 ### Ceveats
-The code was only tested with OSx 10.9+, MATLAB 2014a 8.3.0, Xcode Version 5+ and OpenEXR 2.1.0.
+The code was tested with OSx 10.9+, MATLAB 2014a 8.3.0, Xcode 5+ and OpenEXR 2.1.0.
