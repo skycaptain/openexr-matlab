@@ -1,7 +1,7 @@
 # OpenEXR for Matlab
 
 ### Note
-This is a modified mirror repository for the OpenEXR-Bindings from *HDRITools - High Dynamic Range Image Tools*. The original code is either incompatible or hard to compile with the latest versions of OpenEXR and mex, so we modified and cleaned-up their code to be hassle-free compatible with the latest versions of MATLAB, Xcode and the OpenEXR-Library.
+This is a modified mirror repository for the OpenEXR-Bindings from *HDRITools - High Dynamic Range Image Tools*. The original code is either incompatible or hard to compile with the latest versions of OpenEXR and mex, so we modified and cleaned-up their code to be hassle-free compatible with the latest versions of MATLAB, Xcode and the OpenEXR-Library. The bindings were tested with OSx 10.9+, MATLAB 2014a 8.3.0+, Xcode 5+ and OpenEXR 2.0.0+.
 
 The original code can be obtained at [https://bitbucket.org/edgarv/hdritools/](https://bitbucket.org/edgarv/hdritools/). The original copyright remains to Jinwei Gu and Edgar Velazquez-Armendariz.
 
@@ -9,15 +9,21 @@ The original code can be obtained at [https://bitbucket.org/edgarv/hdritools/](h
 OpenEXR is a popular high dynamic range image fileformat mainly used by the film industry. This repository provides an interface for reading and writing OpenEXR files within MATLAB.
 
 ### Install
-Install the latest version of the OpenEXR-Library, e.g. via [Homebrew](http://brew.sh/):
+First, make sure you have setup up mex. Otherwise run
+```matlab
+mex -setup
+```
+inside of MATLAB.
 
-	$ brew install openexr
+Install the latest version of the OpenEXR-Library, e.g. via [Homebrew](http://brew.sh/)
+```bash
+brew install openexr
+```
 
-Now just run `make.m` inside of MATLAB to comile the bindings. If you install the OpenEXR-Library without Homebrew you may also change the pathname inside of `make.m` to the path you've installed the OpenEXR-Library.
+Run `make.m` inside of MATLAB to compile the bindings. If you install  OpenEXR without Homebrew make sure the paths inside of `make.m` point to your OpenEXR installation.
 
-You may also need to update your `mexopts.sh`. An updated version of `mexopts.sh` is included within the files, just diff them, or just copy the file to `~/.matlab`.
-
-Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and `exrinfo` just like any other MATLAB-Function.
+##### Ceveats
+You may also need to update `~/.matlab/YOUR_MATLAB_VERSION/mexopts.sh` (e.g. in case you get a xcodebuild error, saying a SDK can not be located). Just change all occurances of e.g. `macosx10.8` to your version e.g. `macosx10.10` (3 occurances, comments excluded). If you are still getting errors, make sure you have the correct version of XCode installed or install the SDK for your system (http://www.mathworks.com/matlabcentral/answers/243868-mex-can-t-find-compiler-after-xcode-7-update-r2015b)
 
 ### Usage
 ##### exrread
@@ -45,6 +51,3 @@ Now you can use `exrread`, `exrreadchannels`, `exrwrite`, `exrwritechannels` and
 	   300   300     3
 
 	>> exrwrite(a, 'a.exr');
-
-### Ceveats
-The code was tested with OSx 10.9+, MATLAB 2014a 8.3.0, Xcode 5+ and OpenEXR 2.1.0.
