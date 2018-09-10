@@ -5,3 +5,4 @@
 /OpenEXR for Matlab-Info.plist
 /OpenEXR_for_MatlabProj.xcconfig
 /OpenEXR_for_MatlabTarget.xcconfig
+*.mexa64
