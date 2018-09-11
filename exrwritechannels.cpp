@@ -1,14 +1,14 @@
 /*============================================================================
- 
+
  OpenEXR for Matlab
- 
+
  Distributed under the MIT License (the "License");
  see accompanying file LICENSE for details
  or copy at http://opensource.org/licenses/MIT
- 
+
  Originated from HDRITools - High Dynamic Range Image Tools
  Copyright 2011 Program of Computer Graphics, Cornell University
- 
+
  This software is distributed WITHOUT ANY WARRANTY; without even the
  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  See the License for more information.
@@ -17,7 +17,7 @@
  Jinwei Gu <jwgu AT cs DOT cornell DOT edu>
  Edgar Velazquez-Armendariz <eva5 AT cs DOT cornell DOT edu>
  Manuel Leonhardt <leom AT hs-furtwangen DOT de>
- 
+
  ============================================================================*/
 
 
@@ -252,7 +252,8 @@ public:
          OPENEXR_IMF_INTERNAL_NAMESPACE::Compression compression, OPENEXR_IMF_INTERNAL_NAMESPACE::PixelType targetPixelType,
          const AttributeVector & attributes,
          const std::vector<std::string> & channelNames,
-         const MatricesVec channelData);
+         const MatricesVec channelData,
+         bool  useNative = false);
 
     ~WriteData();
 
@@ -322,7 +323,7 @@ private:
         return m_channels[index].second;
     }
 
-    
+
     const std::string m_filename;
     const OPENEXR_IMF_INTERNAL_NAMESPACE::Compression m_compression;
     const OPENEXR_IMF_INTERNAL_NAMESPACE::PixelType m_type;
@@ -331,12 +332,15 @@ private:
 
     // Attributes of which we take ownership
     AttributeVector m_attributes;
-    
+
     // Pairs of channels and a pointer to the data
     std::vector<DataPair> m_channels;
 
     // Data created through mxMalloc
     std::vector<void*> m_allocated;
+
+    // Uint16 source data shall be interpreted as half float packed data
+    bool m_useNative = false;
 };
 
 
@@ -345,10 +349,11 @@ WriteData::WriteData(const std::string & filename,
                     OPENEXR_IMF_INTERNAL_NAMESPACE::PixelType targetPixelType,
                     const AttributeVector & attributes,
                     const std::vector<std::string> & channelNames,
-                    const MatricesVec channelData) :
+                    const MatricesVec channelData,
+                    bool  useNative) :
 m_filename(filename), m_compression(compression), m_type(targetPixelType),
 m_width(channelData.N), m_height(channelData.M),
-m_attributes(attributes)
+m_attributes(attributes), m_useNative(useNative)
 {
     assert(!channelNames.empty());
     assert(channelNames.size() == channelData.data.size());
@@ -385,6 +390,10 @@ char * WriteData::prepareChannel(const std::pair<const mxArray *,
 
     if (srcType == OpenEXRforMatlab::mex_traits<TargetType>::classID) {
         // If the type is compatible, just return a pointer to the Matlab data
+        return static_cast<char*>(mxGetData(pa));
+    }
+    else if (srcType == mxUINT16_CLASS && this->m_useNative)
+    {
         return static_cast<char*>(mxGetData(pa));
     }
     else {
@@ -463,15 +472,17 @@ WriteData * prepareArguments(const int nrhs, const mxArray * prhs[])
     std::string filename;
     OPENEXR_IMF_INTERNAL_NAMESPACE::Compression compression = OPENEXR_IMF_INTERNAL_NAMESPACE::ZIP_COMPRESSION;
     OPENEXR_IMF_INTERNAL_NAMESPACE::PixelType pixelType = OPENEXR_IMF_INTERNAL_NAMESPACE::HALF;
-    
+
     const mxArray * attribs = NULL;
     AttributeVector attributesVector;
     std::vector<std::string> channelNames;
     MatricesVec channelData;
 
+    bool passNativeHalf = false;
+
 
     /////////// Filename, compression and pixel type //////////////////////////
-    
+
     if (currArg >= nrhs) {
         mexErrMsgIdAndTxt("OpenEXR:argument", "Not enough arguments.");
     }
@@ -492,7 +503,15 @@ WriteData * prepareArguments(const int nrhs, const mxArray * prhs[])
         ++currArg;
 
         if (currArg < nrhs && mxIsChar(prhs[currArg])) {
-            toNativeCheck(prhs[currArg], pixelType);
+            char * data = mxArrayToString(prhs[currArg]);
+            if (data != NULL && strcmp(data, "native") == 0) {
+                pixelType = OPENEXR_IMF_INTERNAL_NAMESPACE::HALF;
+                passNativeHalf = true;
+            }
+            else
+            {
+                toNativeCheck(prhs[currArg], pixelType);
+            }
             ++currArg;
         }
     }
@@ -611,7 +630,7 @@ WriteData * prepareArguments(const int nrhs, const mxArray * prhs[])
 
 
     WriteData * writeData = new WriteData(filename, compression, pixelType,
-        attributesVector, channelNames, channelData);
+        attributesVector, channelNames, channelData, passNativeHalf);
     return writeData;
 }
 
@@ -619,7 +638,7 @@ WriteData * prepareArguments(const int nrhs, const mxArray * prhs[])
 
 
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
     OpenEXRforMatlab::mexEXRInit();
 
