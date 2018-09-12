@@ -1,7 +1,7 @@
 # OpenEXR for Matlab
 
 ### Note
-This is a modified mirror repository for the OpenEXR-Bindings from *HDRITools - High Dynamic Range Image Tools*. The original code is either incompatible or hard to compile with the latest versions of OpenEXR and mex, so we modified and cleaned-up their code to be hassle-free compatible with the latest versions of MATLAB, Xcode and the OpenEXR-Library. The bindings were tested with OSx 10.9+, MATLAB 2014a 8.3.0+, Xcode 5+ and OpenEXR 2.0.0+.
+This is a modified mirror repository for the OpenEXR-Bindings from *HDRITools - High Dynamic Range Image Tools*. The original code is either incompatible or hard to compile with the latest versions of OpenEXR and mex, so we modified and cleaned-up their code to be hassle-free compatible with the latest versions of MATLAB, Xcode and the OpenEXR-Library. The bindings were tested with OSx 10.9+, MATLAB 2014a 8.3.0+, Xcode 5+ and OpenEXR 2.0.0+ and later adapted to compile on Ubuntu 18.04 with MATLAB 9.4.0.813654 (R2018a) and package libopenexr-dev installed in version 2.2.0-11.1ubuntu1.
 
 The original code can be obtained at [https://bitbucket.org/edgarv/hdritools/](https://bitbucket.org/edgarv/hdritools/). The original copyright remains to Jinwei Gu and Edgar Velazquez-Armendariz.
 

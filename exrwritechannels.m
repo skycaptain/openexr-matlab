@@ -18,6 +18,8 @@ function exrwritechannels( filename )
 %     half   - use half precision (16-bit) floating point numbers.
 %     single - use single precision (32-bit) floating point numbers.
 %     float  - the same as 'single'.
+%     native - data passed as uint16 is native half data (IEEE 754-2008 packed,
+%              conversion can be done like fp16 in Cleve Laboratory does)
 %
 %   ATTRIBS is a containers.Map object whose keys are the attribute's names
 %   and the value correspond to the attribute values. The names have to be

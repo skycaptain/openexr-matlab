@@ -24,6 +24,10 @@ function exrreadchannels( filename )
 %   not exist. Use EXRINFO to get a list of the channels available for
 %   a given file.
 %
+%   All variants of accessing the channel data allow the passing of a cell array containing
+%   one first string {'as_half'} to request uint16 packed half float data instead of single.
+%   This parameter has to be passed as the first parameter.
+%
 %   Note: this implementation uses the ILM IlmImf library version 1.7.
 %
 %   See also CONTAINERS.MAP,EXRINFO,EXRREAD,TONEMAP
