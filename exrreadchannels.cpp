@@ -1,14 +1,14 @@
 /*============================================================================
- 
+
  OpenEXR for Matlab
- 
+
  Distributed under the MIT License (the "License");
  see accompanying file LICENSE for details
  or copy at http://opensource.org/licenses/MIT
- 
+
  Originated from HDRITools - High Dynamic Range Image Tools
  Copyright 2011 Program of Computer Graphics, Cornell University
- 
+
  This software is distributed WITHOUT ANY WARRANTY; without even the
  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  See the License for more information.
@@ -17,13 +17,14 @@
  Jinwei Gu <jwgu AT cs DOT cornell DOT edu>
  Edgar Velazquez-Armendariz <eva5 AT cs DOT cornell DOT edu>
  Manuel Leonhardt <leom AT hs-furtwangen DOT de>
- 
+
  ============================================================================*/
 
 
 #include <string>
 #include <cassert>
 #include <vector>
+#include <algorithm>
 
 #include <mex.h>
 
@@ -43,6 +44,7 @@
 #endif
 
 #include "utilities.h"
+#include "MatlabToImf.h"
 
 
 using namespace OPENEXR_IMF_INTERNAL_NAMESPACE;
@@ -116,7 +118,8 @@ void getRequestedChannels(int nrhs, const mxArray *prhs[],
 void prepareFrameBuffer(FrameBuffer & fb, const Box2i & dataWindow,
     const ChannelList & channels,
     const std::vector<std::string> & requestedChannels,
-    std::vector<mxArray *> & outMatlabData)
+    std::vector<mxArray *> & outMatlabData,
+    bool half_as_uint16 = false)
 {
     assert(!requestedChannels.empty());
     assert(outMatlabData.size() == requestedChannels.size());
@@ -134,11 +137,17 @@ void prepareFrameBuffer(FrameBuffer & fb, const Box2i & dataWindow,
 
     for (size_t i = 0; i != requestedChannels.size(); ++i) {
         // Allocate the memory
-        mxArray * data = 
-            mxCreateNumericMatrix(height, width, mxSINGLE_CLASS, mxREAL);
+        mxArray * data;
+        if (half_as_uint16)
+        {
+            data = mxCreateNumericMatrix(height, width, mxUINT16_CLASS, mxREAL);
+        }
+        else
+        {
+            data = mxCreateNumericMatrix(height, width, mxSINGLE_CLASS, mxREAL);
+        }
         outMatlabData[i] = data;
 
-        float * ptr = static_cast<float*>(mxGetData(data));
 
         // Get the appropriate sampling factors
         int xSampling = 1, ySampling = 1;
@@ -147,12 +156,24 @@ void prepareFrameBuffer(FrameBuffer & fb, const Box2i & dataWindow,
             xSampling = cIt.channel().xSampling;
             ySampling = cIt.channel().ySampling;
         }
-        
-        // Insert the slice in the framebuffer
-        fb.insert(requestedChannels[i].c_str(), Slice(FLOAT, (char*)(ptr + offset),
-            sizeof(float) * xStride,
-            sizeof(float) * yStride,
-            xSampling, ySampling));
+
+        // Read data, parameters depending on mode
+        if (half_as_uint16)
+        {
+            half * ptr = static_cast<half*>(mxGetData(data));
+            fb.insert(requestedChannels[i].c_str(), Slice(HALF, (char*)(ptr + offset),
+                sizeof(half) * xStride,
+                sizeof(half) * yStride,
+                xSampling, ySampling));
+        }
+        else
+        {
+            float * ptr = static_cast<float*>(mxGetData(data));
+            fb.insert(requestedChannels[i].c_str(), Slice(FLOAT, (char*)(ptr + offset),
+                sizeof(float) * xStride,
+                sizeof(float) * yStride,
+                xSampling, ySampling));
+        }
     }
 }
 
@@ -201,14 +222,31 @@ inline void getChannelNames(const ChannelList & channels,
 
 
 
-void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[]) 
-{ 
+void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
+{
 	OpenEXRforMatlab::mexEXRInit();
 
     /* Check for proper number of arguments */
     if (nrhs < 1) {
         mexErrMsgIdAndTxt("OpenEXR:argument", "Too few arguments.");
     }
+
+    bool read_half_float = false;
+    if (nrhs >= 2 && mxIsCell(prhs[0]))
+    {
+        std::vector<std::string> cell_data;
+        if (   OpenEXRforMatlab::toNative(prhs[0], cell_data)
+            && std::find(cell_data.begin(), cell_data.end(), "as_half") != cell_data.end())
+        {
+            read_half_float = true;
+        }
+
+        // To reduce complexity of changes hide that an additional parameter was used
+        // before passing parameter reference to getRequestedChannels.
+        nrhs -= 1;
+        prhs = &prhs[1];
+    }
+
 
     char *inputfilePtr = mxArrayToString(prhs[0]);
     if (inputfilePtr == NULL) {
@@ -227,7 +265,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         mexErrMsgIdAndTxt("OpenEXR:argument",
             "Invalid number of output arguments.");
     }
-    
+
 
     try {
         InputFile img(inputfile.c_str());
@@ -252,7 +290,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
         const ChannelList & imgChannels = img.header().channels();
         std::vector<mxArray *> mxData(channelNames.size());
         FrameBuffer framebuffer;
-        prepareFrameBuffer(framebuffer, dw, imgChannels, channelNames, mxData);
+        prepareFrameBuffer(framebuffer, dw, imgChannels, channelNames, mxData, read_half_float);
 
         // Actually read the pixels
         img.setFrameBuffer(framebuffer);
